@@ -1,0 +1,32 @@
+---
+import { getOrderSummary } from "@/features/order";
+
+const summary = getOrderSummary();
+---
+<div class="rounded-md border mt-6">
+  <table class="w-full caption-bottom text-sm">
+    <thead class="[&_tr]:border-b">
+      <tr class="border-b">
+        <th scope="col" class="h-12 px-4 text-left font-medium text-muted-foreground">メニュー</th>
+        <th scope="col" class="h-12 px-4 text-left font-medium text-muted-foreground">注文数</th>
+        <th scope="col" class="h-12 px-4 text-left font-medium text-muted-foreground">小計</th>
+      </tr>
+    </thead>
+    <tbody class="[&_tr:last-child]:border-0">
+      {summary.byMenu.map(item => (
+        <tr class="border-b transition-colors hover:bg-muted/50">
+          <td class="p-4 font-medium">{item.name}</td>
+          <td class="p-4">{item.count}</td>
+          <td class="p-4">&yen;{item.subtotal.toLocaleString()}</td>
+        </tr>
+      ))}
+    </tbody>
+    <tfoot>
+      <tr class="border-t font-medium">
+        <td class="p-4">合計</td>
+        <td class="p-4">{summary.totalOrders}</td>
+        <td class="p-4">&yen;{summary.totalRevenue.toLocaleString()}</td>
+      </tr>
+    </tfoot>
+  </table>
+</div>

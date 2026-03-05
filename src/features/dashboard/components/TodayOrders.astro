@@ -1,0 +1,44 @@
+---
+import { getMenuById } from "@/features/menu";
+import { getOrdersByDate } from "@/features/order";
+import StatusBadge from "@/features/order/components/StatusBadge.astro";
+
+const todayOrders = getOrdersByDate();
+---
+
+<div class="mt-6">
+  <h3 class="text-lg font-semibold mb-4">本日の注文</h3>
+  <div class="rounded-md border">
+    <table class="w-full caption-bottom text-sm">
+      <thead class="[&_tr]:border-b">
+        <tr class="border-b">
+          <th scope="col" class="h-12 px-4 text-left font-medium text-muted-foreground"
+            >注文者</th
+          >
+          <th scope="col" class="h-12 px-4 text-left font-medium text-muted-foreground"
+            >メニュー</th
+          >
+          <th scope="col" class="h-12 px-4 text-left font-medium text-muted-foreground"
+            >ステータス</th
+          >
+        </tr>
+      </thead>
+      <tbody class="[&_tr:last-child]:border-0">
+        {
+          todayOrders.map((order) => {
+            const menu = getMenuById(order.menuItemId);
+            return (
+              <tr class="border-b transition-colors hover:bg-muted/50">
+                <td class="p-4 font-medium">{order.userName}</td>
+                <td class="p-4">{menu?.name ?? "不明"}</td>
+                <td class="p-4">
+                  <StatusBadge status={order.status} />
+                </td>
+              </tr>
+            );
+          })
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

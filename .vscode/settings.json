@@ -1,0 +1,9 @@
+{
+	"css.validate": false,
+	"css.lint.unknownAtRules": "ignore",
+	"editor.defaultFormatter": "biomejs.biome",
+	"editor.formatOnSave": true,
+	"editor.codeActionsOnSave": {
+		"source.organizeImports.biome": "explicit"
+	}
+}

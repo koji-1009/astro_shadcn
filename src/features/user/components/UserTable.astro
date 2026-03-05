@@ -1,0 +1,59 @@
+---
+import {
+	DEPARTMENT_CONFIG,
+	DIETARY_LABELS,
+	ROLE_LABELS,
+	type UserProfile,
+} from "@/features/user";
+
+interface Props {
+	users: readonly UserProfile[];
+}
+
+const { users } = Astro.props;
+---
+<div class="rounded-md border">
+  <table class="w-full caption-bottom text-sm">
+    <thead class="[&_tr]:border-b">
+      <tr class="border-b">
+        <th scope="col" class="h-12 px-4 text-left font-medium text-muted-foreground">名前</th>
+        <th scope="col" class="h-12 px-4 text-left font-medium text-muted-foreground">メール</th>
+        <th scope="col" class="h-12 px-4 text-left font-medium text-muted-foreground">部署</th>
+        <th scope="col" class="h-12 px-4 text-left font-medium text-muted-foreground">ロール</th>
+        <th scope="col" class="h-12 px-4 text-left font-medium text-muted-foreground">フロア</th>
+        <th scope="col" class="h-12 px-4 text-left font-medium text-muted-foreground">食事制限</th>
+      </tr>
+    </thead>
+    <tbody class="[&_tr:last-child]:border-0">
+      {users.map(user => (
+        <tr class="border-b transition-colors hover:bg-muted/50">
+          <td class="p-4 font-medium">{user.name}</td>
+          <td class="p-4 text-muted-foreground">{user.email}</td>
+          <td class="p-4">
+            <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold">
+              {DEPARTMENT_CONFIG[user.department].label}
+            </span>
+          </td>
+          <td class="p-4">{ROLE_LABELS[user.role]}</td>
+          <td class="p-4">{user.floor}</td>
+          <td class="p-4">
+            {user.dietaryRestrictions.length > 0 ? (
+              <div class="flex flex-wrap gap-1">
+                {user.dietaryRestrictions.map(r => (
+                  <span class="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs">
+                    {DIETARY_LABELS[r]}
+                  </span>
+                ))}
+                {user.allergyDetail && (
+                  <span class="text-xs text-muted-foreground">({user.allergyDetail})</span>
+                )}
+              </div>
+            ) : (
+              <span class="text-xs text-muted-foreground">なし</span>
+            )}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

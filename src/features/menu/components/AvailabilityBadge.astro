@@ -1,0 +1,23 @@
+---
+interface Props {
+	available: boolean;
+}
+
+const { available } = Astro.props;
+
+const config = {
+	true: {
+		style: "bg-green-50 text-green-700 border-green-200",
+		label: "提供中",
+	},
+	false: {
+		style: "bg-gray-50 text-gray-600 border-gray-200",
+		label: "休止中",
+	},
+} as const;
+
+const { style, label } = config[`${available}`];
+---
+<span class={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${style}`}>
+  {label}
+</span>

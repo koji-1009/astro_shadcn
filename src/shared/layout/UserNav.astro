@@ -1,0 +1,39 @@
+---
+interface Props {
+	currentPath: string;
+}
+const { currentPath } = Astro.props;
+
+const links = [
+	{ href: "/", label: "ホーム", icon: "🏠" },
+	{ href: "/menu/lunch/", label: "お昼弁当", icon: "🍱" },
+	{ href: "/menu/snack/", label: "おやつ", icon: "🍩" },
+	{ href: "/notices/", label: "お知らせ", icon: "📢" },
+	{ href: "/register/", label: "登録", icon: "📝" },
+];
+
+function isActive(linkHref: string, current: string): boolean {
+	const normalized = current.endsWith("/") ? current : `${current}/`;
+	if (linkHref === "/") return normalized === "/";
+	return normalized.startsWith(linkHref);
+}
+---
+<nav aria-label="メインメニュー" class="border-b bg-background">
+  <div class="max-w-5xl mx-auto flex gap-1 px-4 overflow-x-auto">
+    {links.map(link => (
+      <a
+        href={link.href}
+        class:list={[
+          "flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition-colors",
+          isActive(link.href, currentPath)
+            ? "border-primary text-foreground"
+            : "border-transparent text-muted-foreground hover:text-foreground hover:border-border",
+        ]}
+        aria-current={isActive(link.href, currentPath) ? "page" : undefined}
+      >
+        <span class="text-base">{link.icon}</span>
+        {link.label}
+      </a>
+    ))}
+  </div>
+</nav>

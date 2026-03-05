@@ -1,0 +1,12 @@
+---
+import NoticeEditPanel from "@/features/notice/components/NoticeEditPanel";
+import NoticeList from "@/features/notice/components/NoticeList.astro";
+import AdminLayout from "@/shared/layout/AdminLayout.astro";
+---
+<AdminLayout title="お知らせ - お弁当管理">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-semibold tracking-tight">お知らせ管理</h1>
+    <NoticeEditPanel mode="create" client:idle />
+  </div>
+  <NoticeList />
+</AdminLayout>

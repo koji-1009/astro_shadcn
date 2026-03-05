@@ -1,0 +1,19 @@
+---
+import { getOrderSummary } from "@/features/order";
+
+const summary = getOrderSummary();
+---
+<div class="grid gap-4 md:grid-cols-3">
+  <div class="rounded-lg border bg-card p-6 shadow-sm">
+    <p class="text-sm font-medium text-muted-foreground">本日の注文数</p>
+    <p class="text-3xl font-bold mt-1">{summary.totalOrders}</p>
+  </div>
+  <div class="rounded-lg border bg-card p-6 shadow-sm">
+    <p class="text-sm font-medium text-muted-foreground">売上合計</p>
+    <p class="text-3xl font-bold mt-1">&yen;{summary.totalRevenue.toLocaleString()}</p>
+  </div>
+  <div class="rounded-lg border bg-card p-6 shadow-sm">
+    <p class="text-sm font-medium text-muted-foreground">人気メニュー</p>
+    <p class="text-3xl font-bold mt-1">{summary.mostPopular}</p>
+  </div>
+</div>

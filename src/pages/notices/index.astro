@@ -1,0 +1,11 @@
+---
+import { getNotices } from "@/features/notice";
+import UserNoticeList from "@/features/notice/components/UserNoticeList.astro";
+import UserLayout from "@/shared/layout/UserLayout.astro";
+
+const notices = getNotices();
+---
+<UserLayout title="お知らせ">
+  <h1 class="text-xl font-bold mb-4">お知らせ</h1>
+  <UserNoticeList notices={notices} />
+</UserLayout>

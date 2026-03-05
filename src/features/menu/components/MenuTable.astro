@@ -1,0 +1,65 @@
+---
+import { getMenusByCategory } from "@/features/menu";
+import type { BaseType } from "@/features/menu/types";
+import { CATEGORY_LABELS, type MenuCategory } from "@/shared/types/categories";
+import AvailabilityBadge from "./AvailabilityBadge.astro";
+import MenuActions from "./MenuActions";
+import MenuEditPanel from "./MenuEditPanel";
+
+interface Props {
+	category: MenuCategory;
+}
+
+const { category } = Astro.props;
+const categoryLabel = CATEGORY_LABELS[category];
+const menus = getMenusByCategory(category);
+
+const baseTypeLabels: Record<BaseType, string> = {
+	rice: "ご飯もの",
+	meat: "肉メイン",
+	fish: "魚メイン",
+	bread: "パン",
+	other: "その他",
+};
+---
+<section>
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-semibold tracking-tight">{categoryLabel}メニュー管理</h1>
+    <MenuEditPanel mode="create" category={category} client:idle />
+  </div>
+
+  <div class="rounded-md border">
+    <table class="w-full caption-bottom text-sm">
+      <thead class="[&_tr]:border-b">
+        <tr class="border-b transition-colors hover:bg-muted/50">
+          <th scope="col" class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">メニュー名</th>
+          <th scope="col" class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">ベースタイプ</th>
+          <th scope="col" class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">オプション数</th>
+          <th scope="col" class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">価格</th>
+          <th scope="col" class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">ステータス</th>
+          <th scope="col" class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">操作</th>
+        </tr>
+      </thead>
+      <tbody class="[&_tr:last-child]:border-0">
+        {menus.map(menu => (
+          <tr class="border-b transition-colors hover:bg-muted/50">
+            <td class="p-4 align-middle font-medium">{menu.name}</td>
+            <td class="p-4 align-middle">
+              <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold">
+                {baseTypeLabels[menu.baseType] ?? menu.baseType}
+              </span>
+            </td>
+            <td class="p-4 align-middle">{menu.options.length}種</td>
+            <td class="p-4 align-middle">&yen;{menu.price.toLocaleString()}</td>
+            <td class="p-4 align-middle">
+              <AvailabilityBadge available={menu.available} />
+            </td>
+            <td class="p-4 align-middle">
+              <MenuActions menuItem={menu} client:idle />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</section>

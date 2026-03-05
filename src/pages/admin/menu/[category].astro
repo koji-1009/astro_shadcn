@@ -1,0 +1,17 @@
+---
+import MenuTable from "@/features/menu/components/MenuTable.astro";
+import AdminLayout from "@/shared/layout/AdminLayout.astro";
+import { CATEGORY_LABELS, menuCategorySchema } from "@/shared/types/categories";
+
+const parsed = menuCategorySchema.safeParse(Astro.params.category);
+
+if (!parsed.success) {
+	return Astro.redirect("/admin/");
+}
+
+const category = parsed.data;
+const label = CATEGORY_LABELS[category];
+---
+<AdminLayout title={`${label} - お弁当管理`}>
+  <MenuTable category={category} />
+</AdminLayout>

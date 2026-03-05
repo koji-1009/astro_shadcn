@@ -1,0 +1,27 @@
+---
+interface Props {
+	status: "pending" | "confirmed" | "cancelled";
+}
+
+const { status } = Astro.props;
+
+const config = {
+	confirmed: {
+		style: "bg-green-50 text-green-700 border-green-200",
+		label: "確定",
+	},
+	pending: {
+		style: "bg-yellow-50 text-yellow-700 border-yellow-200",
+		label: "保留",
+	},
+	cancelled: {
+		style: "bg-gray-50 text-gray-500 border-gray-200",
+		label: "キャンセル",
+	},
+} as const;
+
+const { style, label } = config[status];
+---
+<span class={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${style}`}>
+  {label}
+</span>

@@ -1,0 +1,46 @@
+---
+import { getMenuById } from "@/features/menu";
+import { OrderForm } from "@/features/order/components/OrderForm";
+import UserLayout from "@/shared/layout/UserLayout.astro";
+import { CATEGORY_LABELS } from "@/shared/types/categories";
+
+const { id } = Astro.params;
+const item = id ? getMenuById(id) : undefined;
+
+if (!item) {
+	return Astro.redirect("/");
+}
+---
+<UserLayout title={item.name}>
+  <div class="max-w-2xl mx-auto">
+    <a href={`/menu/${item.category}/`} class="text-sm text-muted-foreground hover:text-foreground transition-colors">
+      &larr; {CATEGORY_LABELS[item.category]}に戻る
+    </a>
+
+    <div class="mt-4 border rounded-lg p-6">
+      <div class="flex items-start justify-between gap-2 mb-2">
+        <h1 class="text-2xl font-bold">{item.name}</h1>
+        {!item.available && (
+          <span class="text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded-full">
+            売り切れ
+          </span>
+        )}
+      </div>
+      <p class="text-sm text-muted-foreground mb-4">{CATEGORY_LABELS[item.category]}</p>
+      <p class="text-3xl font-bold mb-6">&yen;{item.price.toLocaleString()}</p>
+
+      {item.available ? (
+        <OrderForm
+          menuName={item.name}
+          basePrice={item.price}
+          options={item.options}
+          client:load
+        />
+      ) : (
+        <p class="text-muted-foreground text-center py-8">
+          現在売り切れです。
+        </p>
+      )}
+    </div>
+  </div>
+</UserLayout>

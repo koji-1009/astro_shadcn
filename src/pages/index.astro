@@ -1,0 +1,26 @@
+---
+import { getMenus } from "@/features/menu";
+import MenuGrid from "@/features/menu/components/MenuGrid.astro";
+import { getNotices } from "@/features/notice";
+import UserNoticeList from "@/features/notice/components/UserNoticeList.astro";
+import UserLayout from "@/shared/layout/UserLayout.astro";
+
+const availableMenus = getMenus().filter((m) => m.available);
+const recentNotices = getNotices()
+	.filter((n) => n.pinned)
+	.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+	.slice(0, 3);
+---
+<UserLayout title="お弁当注文 - ホーム">
+  <h1 class="sr-only">お弁当注文 ホーム</h1>
+
+  <section class="mb-8">
+    <h2 class="text-xl font-bold mb-4">お知らせ</h2>
+    <UserNoticeList notices={recentNotices} />
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">本日のメニュー</h2>
+    <MenuGrid items={availableMenus} />
+  </section>
+</UserLayout>

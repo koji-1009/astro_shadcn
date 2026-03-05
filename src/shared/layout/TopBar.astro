@@ -1,0 +1,22 @@
+---
+import RoleSwitcher from "@/shared/components/RoleSwitcher.astro";
+import type { Role } from "@/shared/types";
+
+interface Props {
+	role: Role;
+}
+
+const { role } = Astro.props;
+const title = role === "admin" ? "お弁当管理" : "お弁当注文";
+const userName = role === "admin" ? "管理者: 田中太郎" : "田中太郎";
+---
+<header class="h-(--topbar-height) border-b bg-background flex items-center justify-between px-6">
+  <div class="flex items-center gap-3">
+    <span class="text-xl">🍱</span>
+    <h1 class="text-lg font-semibold tracking-tight">{title}</h1>
+  </div>
+  <div class="flex items-center gap-4">
+    <span class="text-sm text-muted-foreground">{userName}</span>
+    <RoleSwitcher role={role} />
+  </div>
+</header>

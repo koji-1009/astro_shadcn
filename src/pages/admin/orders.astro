@@ -1,0 +1,23 @@
+---
+import { getOrders } from "@/features/order";
+import OrderSummary from "@/features/order/components/OrderSummary.astro";
+import OrderTable from "@/features/order/components/OrderTable.astro";
+import Pagination from "@/shared/components/Pagination.astro";
+import AdminLayout from "@/shared/layout/AdminLayout.astro";
+
+const PER_PAGE = 10;
+const page = Math.max(1, Number(Astro.url.searchParams.get("page")) || 1);
+const allOrders = getOrders();
+const totalPages = Math.max(1, Math.ceil(allOrders.length / PER_PAGE));
+const currentPage = Math.min(page, totalPages);
+const orders = allOrders.slice(
+	(currentPage - 1) * PER_PAGE,
+	currentPage * PER_PAGE,
+);
+---
+<AdminLayout title="注文一覧 - お弁当管理">
+  <h1 class="text-2xl font-semibold tracking-tight mb-6">注文一覧</h1>
+  <OrderTable orders={orders} />
+  <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl="/admin/orders" />
+  <OrderSummary />
+</AdminLayout>

@@ -1,0 +1,60 @@
+---
+interface Props {
+	currentPage: number;
+	totalPages: number;
+	baseUrl: string;
+}
+
+const { currentPage, totalPages, baseUrl } = Astro.props;
+
+function pageUrl(page: number) {
+	const separator = baseUrl.includes("?") ? "&" : "?";
+	return `${baseUrl}${separator}page=${page}`;
+}
+
+const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+---
+{totalPages > 1 && (
+	<nav aria-label="ページネーション" class="flex items-center justify-center gap-1 mt-6">
+		{currentPage > 1 ? (
+			<a
+				href={pageUrl(currentPage - 1)}
+				class="inline-flex items-center justify-center rounded-md border px-3 py-2 text-sm hover:bg-accent transition-colors"
+			>
+				&larr; 前へ
+			</a>
+		) : (
+			<span class="inline-flex items-center justify-center rounded-md border px-3 py-2 text-sm text-muted-foreground opacity-50">
+				&larr; 前へ
+			</span>
+		)}
+
+		{pages.map(page => (
+			page === currentPage ? (
+				<span class="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-medium min-w-[2.5rem]">
+					{page}
+				</span>
+			) : (
+				<a
+					href={pageUrl(page)}
+					class="inline-flex items-center justify-center rounded-md border px-3 py-2 text-sm hover:bg-accent transition-colors min-w-[2.5rem]"
+				>
+					{page}
+				</a>
+			)
+		))}
+
+		{currentPage < totalPages ? (
+			<a
+				href={pageUrl(currentPage + 1)}
+				class="inline-flex items-center justify-center rounded-md border px-3 py-2 text-sm hover:bg-accent transition-colors"
+			>
+				次へ &rarr;
+			</a>
+		) : (
+			<span class="inline-flex items-center justify-center rounded-md border px-3 py-2 text-sm text-muted-foreground opacity-50">
+				次へ &rarr;
+			</span>
+		)}
+	</nav>
+)}
