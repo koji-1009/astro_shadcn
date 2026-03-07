@@ -1,5 +1,5 @@
 ---
-import { ViewTransitions } from "astro:transitions";
+import { ClientRouter } from "astro:transitions";
 import "@/styles/globals.css";
 import Sidebar from "./Sidebar.astro";
 import TopBar from "./TopBar.astro";
@@ -16,7 +16,7 @@ const { title = "お弁当管理" } = Astro.props;
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{title}</title>
   <meta name="description" content="お弁当注文システム管理画面 — Astro SSR デモ" />
-  <ViewTransitions />
+  <ClientRouter />
 </head>
 <body class="min-h-screen">
   <TopBar role={Astro.locals.role} transition:animate="none" />

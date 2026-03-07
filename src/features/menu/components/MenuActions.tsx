@@ -1,3 +1,4 @@
+import { actions } from "astro:actions";
 import { useState } from "react";
 import {
 	AlertDialog,
@@ -19,17 +20,12 @@ export default function MenuActions({ menuItem }: { menuItem: MenuItem }) {
 
 	async function handleDelete() {
 		setError("");
-		try {
-			const res = await fetch("/api/menus", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ action: "delete", id: menuItem.id }),
-			});
-			if (!res.ok) throw new Error("削除に失敗しました");
-			window.location.reload();
-		} catch {
+		const { error: err } = await actions.menus.delete({ id: menuItem.id });
+		if (err) {
 			setError("削除に失敗しました");
+			return;
 		}
+		window.location.reload();
 	}
 
 	return (

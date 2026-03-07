@@ -1,3 +1,4 @@
+import { actions } from "astro:actions";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -31,44 +32,31 @@ export default function NoticeEditPanel({ mode, notice }: Props) {
 		if (!title.trim()) return;
 		setSaving(true);
 		setError("");
-		try {
-			const res = await fetch("/api/notices", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(
-					mode === "create"
-						? { action: "create", title, body, pinned }
-						: { action: "update", id: notice?.id, title, body, pinned },
-				),
-			});
-			if (!res.ok) throw new Error("保存に失敗しました");
-			setOpen(false);
-			window.location.reload();
-		} catch {
+		const { error: err } =
+			mode === "create"
+				? await actions.notices.create({ title, body, pinned })
+				: await actions.notices.update({ id: notice!.id, title, body, pinned });
+		setSaving(false);
+		if (err) {
 			setError("保存に失敗しました。もう一度お試しください。");
-		} finally {
-			setSaving(false);
+			return;
 		}
+		setOpen(false);
+		window.location.reload();
 	}
 
 	async function handleDelete() {
 		if (!notice?.id) return;
 		setSaving(true);
 		setError("");
-		try {
-			const res = await fetch("/api/notices", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ action: "delete", id: notice.id }),
-			});
-			if (!res.ok) throw new Error("削除に失敗しました");
-			setOpen(false);
-			window.location.reload();
-		} catch {
+		const { error: err } = await actions.notices.delete({ id: notice.id });
+		setSaving(false);
+		if (err) {
 			setError("削除に失敗しました。もう一度お試しください。");
-		} finally {
-			setSaving(false);
+			return;
 		}
+		setOpen(false);
+		window.location.reload();
 	}
 
 	return (

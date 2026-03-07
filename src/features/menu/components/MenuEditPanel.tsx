@@ -1,3 +1,4 @@
+import { actions } from "astro:actions";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -47,38 +48,29 @@ export default function MenuEditPanel({ mode, menuItem, category }: Props) {
 		if (!name.trim() || !price || price <= 0) return;
 		setSaving(true);
 		setError("");
-		try {
-			const res = await fetch("/api/menus", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(
-					mode === "create"
-						? {
-								action: "create",
-								category,
-								name,
-								baseType,
-								price,
-								optionIds: selectedOptions,
-							}
-						: {
-								action: "update",
-								id: menuItem?.id,
-								name,
-								baseType,
-								price,
-								optionIds: selectedOptions,
-							},
-				),
-			});
-			if (!res.ok) throw new Error("保存に失敗しました");
-			setOpen(false);
-			window.location.reload();
-		} catch {
+		const { error: err } =
+			mode === "create"
+				? await actions.menus.create({
+						category: category!,
+						name,
+						baseType,
+						price,
+						optionIds: selectedOptions,
+					})
+				: await actions.menus.update({
+						id: menuItem!.id,
+						name,
+						baseType,
+						price,
+						optionIds: selectedOptions,
+					});
+		setSaving(false);
+		if (err) {
 			setError("保存に失敗しました。もう一度お試しください。");
-		} finally {
-			setSaving(false);
+			return;
 		}
+		setOpen(false);
+		window.location.reload();
 	}
 
 	return (
