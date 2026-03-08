@@ -3,17 +3,17 @@ import type { Role } from "./shared/types";
 import { DEFAULT_ROLE, ROLE_COOKIE_NAME } from "./shared/types";
 
 export const onRequest = defineMiddleware((context, next) => {
-	// Skip API routes
-	if (context.url.pathname.startsWith("/api/")) {
-		return next();
-	}
-
 	const cookieValue = context.cookies.get(ROLE_COOKIE_NAME)?.value;
 	const role: Role =
 		cookieValue === "admin" || cookieValue === "user"
 			? cookieValue
 			: DEFAULT_ROLE;
 	context.locals.role = role;
+
+	// API routes check context.locals.role and return HTTP status directly.
+	if (context.url.pathname.startsWith("/api/")) {
+		return next();
+	}
 
 	const path = context.url.pathname;
 
