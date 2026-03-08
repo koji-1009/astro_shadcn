@@ -6,6 +6,15 @@ import { addNotice, deleteNotice, updateNotice } from "@/features/notice";
 import { menuCategorySchema } from "@/shared/types/categories";
 import { ROLE_COOKIE_NAME, type Role } from "@/shared/types";
 
+function requireAdmin(context: { locals: { role: string } }) {
+	if (context.locals.role !== "admin") {
+		throw new ActionError({
+			code: "UNAUTHORIZED",
+			message: "Admin access required",
+		});
+	}
+}
+
 export const server = {
 	menus: {
 		create: defineAction({
@@ -17,7 +26,10 @@ export const server = {
 				price: z.number().positive(),
 				optionIds: z.array(z.string()).default([]),
 			}),
-			handler: (input) => addMenu(input),
+			handler: (input, context) => {
+				requireAdmin(context);
+				return addMenu(input);
+			},
 		}),
 		update: defineAction({
 			accept: "json",
@@ -29,7 +41,8 @@ export const server = {
 				optionIds: z.array(z.string()).optional(),
 				available: z.boolean().optional(),
 			}),
-			handler: ({ id, ...input }) => {
+			handler: ({ id, ...input }, context) => {
+				requireAdmin(context);
 				const menu = updateMenu(id, input);
 				if (!menu)
 					throw new ActionError({
@@ -42,7 +55,8 @@ export const server = {
 		delete: defineAction({
 			accept: "json",
 			input: z.object({ id: z.string().min(1) }),
-			handler: ({ id }) => {
+			handler: ({ id }, context) => {
+				requireAdmin(context);
 				const deleted = deleteMenu(id);
 				if (!deleted)
 					throw new ActionError({
@@ -61,7 +75,10 @@ export const server = {
 				body: z.string(),
 				pinned: z.boolean().default(false),
 			}),
-			handler: (input) => addNotice(input),
+			handler: (input, context) => {
+				requireAdmin(context);
+				return addNotice(input);
+			},
 		}),
 		update: defineAction({
 			accept: "json",
@@ -71,7 +88,8 @@ export const server = {
 				body: z.string().optional(),
 				pinned: z.boolean().optional(),
 			}),
-			handler: ({ id, ...input }) => {
+			handler: ({ id, ...input }, context) => {
+				requireAdmin(context);
 				const notice = updateNotice(id, input);
 				if (!notice)
 					throw new ActionError({
@@ -84,7 +102,8 @@ export const server = {
 		delete: defineAction({
 			accept: "json",
 			input: z.object({ id: z.string().min(1) }),
-			handler: ({ id }) => {
+			handler: ({ id }, context) => {
+				requireAdmin(context);
 				const deleted = deleteNotice(id);
 				if (!deleted)
 					throw new ActionError({
@@ -103,6 +122,7 @@ export const server = {
 			context.cookies.set(ROLE_COOKIE_NAME, newRole, {
 				path: "/",
 				httpOnly: true,
+				secure: import.meta.env.PROD,
 				maxAge: 60 * 60 * 24 * 365,
 				sameSite: "lax",
 			});
